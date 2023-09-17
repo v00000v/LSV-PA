@@ -1,0 +1,45 @@
+/*
+        A1 A0
+      x B1 B0
+      ---------
+      y3 y2 y1 y0
+      y0 = A0B0
+      y1 = A1B0 + A0B1
+      y2 = A1B1 + carry(y1)
+      y3 = carry(y2)
+*/
+.model mul
+.inputs a1 a0 b1 b0
+.outputs y3 y2 y1 y0
+
+.subckt mul_2bit A1=a1 A0=a0 B=b0 C1=A1B0 C0=A0B0
+.subckt mul_2bit A1=a1 A0=a0 B=b1 C1=A1B1 C0=A0B1
+.subckt fulladder a=A1B0 b=A0B1 cin=0        s=y1 cout=CARRY_y1
+.subckt fulladder a=0    b=A1B1 cin=CARRY_y1 s=y2 cout=y3
+.names A0B0 y0
+1 1
+.end
+
+.model mul_2bit
+.inputs A1 A0 B
+.outputs C1 C0
+.names A0 B C0
+11 1
+.names A1 B C1
+11 1
+.end
+
+.model fulladder
+.inputs a b cin
+.outputs s cout
+.names a b k
+10 1
+01 1
+.names k cin s
+10 1
+01 1
+.names a b cin cout
+11- 1
+1-1 1
+-11 1
+.end
